@@ -14,7 +14,7 @@
       -->
       <label>Multicopter Tuner</label>
       <icon type="theme">system-help</icon>
-      <statustip>Great user interface to provide real value.</statustip>
+      <statustip>Allows real time adjustment and testing of PID gains for a flight controller</statustip>
     </qtgui>
   </class>
 </library>
