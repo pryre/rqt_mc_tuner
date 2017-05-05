@@ -41,9 +41,9 @@
   <widget class="QPushButton" name="button_halt">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>130</x>
      <y>310</y>
-     <width>240</width>
+     <width>120</width>
      <height>50</height>
     </rect>
    </property>
@@ -166,6 +166,9 @@
    </property>
    <property name="maximum">
     <number>100</number>
+   </property>
+   <property name="pageStep">
+    <number>20</number>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -347,6 +350,32 @@
    </property>
    <property name="text">
     <string>Read</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_arm">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>120</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Arm</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_disarm">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>335</y>
+     <width>120</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Disarm</string>
    </property>
   </widget>
  </widget>

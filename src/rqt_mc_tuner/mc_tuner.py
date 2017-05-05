@@ -6,6 +6,9 @@ from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget
 
+from mavros_msgs.msg import AttitudeTarget
+from std_msgs.msg import Float64
+
 class MCTuner(Plugin):
 
     def __init__(self, context):
@@ -35,15 +38,35 @@ class MCTuner(Plugin):
         loadUi(ui_file, self._widget)
         # Give QObjects reasonable names
         self._widget.setObjectName('MCTunerUi')
-        # Show _widget.windowTitle on left-top of each plugin (when 
-        # it's set in _widget). This is useful when you open multiple 
-        # plugins at once. Also if you open multiple instances of your 
-        # plugin at once, these lines add number to make it easy to 
+        # Show _widget.windowTitle on left-top of each plugin (when
+        # it's set in _widget). This is useful when you open multiple
+        # plugins at once. Also if you open multiple instances of your
+        # plugin at once, these lines add number to make it easy to
         # tell from pane to pane.
         if context.serial_number() > 1:
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
         # Add widget to the user interface
         context.add_widget(self._widget)
+
+        self._widget.button_halt.clicked.connect(self.button_halt_pressed)
+        self._widget.button_arm.clicked.connect(self.button_arm_pressed)
+        self._widget.button_disarm.clicked.connect(self.button_disarm_pressed)
+        self._widget.button_gains_read.clicked.connect(self.button_gains_read_pressed)
+        self._widget.button_gains_set.clicked.connect(self.button_gains_set_pressed)
+        self._widget.button_run_test_rates.clicked.connect(self.button_run_test_rates_pressed)
+        self._widget.button_run_test_attitude.clicked.connect(self.button_run_test_attitude_pressed)
+        self._widget.button_write_parameters.clicked.connect(self.button_write_parameters_pressed)
+
+        # XXX: self.output_target_attitude()
+
+        # TODO: Initialize node
+        # TODO: Attitude target publisher
+            # TODO: Output this constantly on a loop?
+			# TODO: Make a counter/something to output the min-max setpoints for tests
+            # TODO: Use tf to convert the min-max attitude values to quaternions
+		# TODO: Have a service to arm/disarm (and call this on halt
+		# TODO: Have a service to read and set parameters
+		# TODO: Have a service to send the EEPROM write command
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
@@ -63,3 +86,38 @@ class MCTuner(Plugin):
         # Comment in to signal that the plugin has a way to configure
         # This will enable a setting button (gear icon) in each dock widget title bar
         # Usually used to open a modal configuration dialog
+
+    def button_halt_pressed(self):
+        rospy.loginfo("Halt button pressed!")
+
+    def button_arm_pressed(self):
+        rospy.loginfo("Arm button pressed!")
+
+    def button_disarm_pressed(self):
+        rospy.loginfo("Disarm button pressed!")
+
+    def button_gains_read_pressed(self):
+        rospy.loginfo("Read gains button pressed!")
+
+    def button_gains_set_pressed(self):
+        rospy.loginfo("Set gains button pressed!")
+
+    def button_run_test_rates_pressed(self):
+        rospy.loginfo("Run rates button pressed!")
+
+    def button_run_test_attitude_pressed(self):
+        rospy.loginfo("Run attitude button pressed!")
+
+    def button_write_parameters_pressed(self):
+        rospy.loginfo("Write EEPROM button pressed!")
+
+    def output_target_attitude(self):
+        at_out = AttitudeTarget()
+
+        at_out.thrust = float(self._widget.slider_throttle.value()) / 100
+
+        rospy.loginfo("DEBUG!")
+        rospy.loginfo(at_out)
+
+
+
