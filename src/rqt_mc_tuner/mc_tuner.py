@@ -7,7 +7,6 @@ from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget
 
 from mavros_msgs.msg import AttitudeTarget
-from std_msgs.msg import Float64
 
 class MCTuner(Plugin):
 
@@ -18,16 +17,16 @@ class MCTuner(Plugin):
         rp = rospkg.RosPack()
 
         # Process standalone plugin command-line arguments
-        from argparse import ArgumentParser
-        parser = ArgumentParser()
+        #from argparse import ArgumentParser
+        #parser = ArgumentParser()
         # Add argument(s) to the parser.
-        parser.add_argument("-q", "--quiet", action="store_true",
-                      dest="quiet",
-                      help="Put plugin in silent mode")
-        args, unknowns = parser.parse_known_args(context.argv())
-        if not args.quiet:
-            print 'arguments: ', args
-            print 'unknowns: ', unknowns
+        #parser.add_argument("-q", "--quiet", action="store_true",
+        #              dest="quiet",
+        #              help="Put plugin in silent mode")
+        #args, unknowns = parser.parse_known_args(context.argv())
+        #if not args.quiet:
+        #    print 'arguments: ', args
+        #    print 'unknowns: ', unknowns
 
         # Create QWidget
         self._widget = QWidget()
@@ -57,9 +56,17 @@ class MCTuner(Plugin):
         self._widget.button_run_test_attitude.clicked.connect(self.button_run_test_attitude_pressed)
         self._widget.button_write_parameters.clicked.connect(self.button_write_parameters_pressed)
 
-        # XXX: self.output_target_attitude()
+        # TODO: Dropdown box to select setpoint output
+        self.pub_sp = rospy.Publisher('/mavros/setpoint_raw/attitude', AttitudeTarget, queue_size=10)
 
-        # TODO: Initialize node
+        self.loop_rate = float(25) #Hz
+        self.timer_setpoint = rospy.Timer(rospy.Duration(1 / self.loop_rate), self.output_target_attitude)
+
+        #while(1):
+        #    self.output_target_attitude()
+        #    self.loop_rate.sleep()
+
+        # TODO: Initialize node (?)
         # TODO: Attitude target publisher
             # TODO: Output this constantly on a loop?
 			# TODO: Make a counter/something to output the min-max setpoints for tests
@@ -70,6 +77,8 @@ class MCTuner(Plugin):
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
+        self.timer_setpoint.shutdown()
+
         pass
 
     def save_settings(self, plugin_settings, instance_settings):
@@ -111,13 +120,13 @@ class MCTuner(Plugin):
     def button_write_parameters_pressed(self):
         rospy.loginfo("Write EEPROM button pressed!")
 
-    def output_target_attitude(self):
+    def output_target_attitude(self, timer_event):
         at_out = AttitudeTarget()
 
         at_out.thrust = float(self._widget.slider_throttle.value()) / 100
 
-        rospy.loginfo("DEBUG!")
-        rospy.loginfo(at_out)
+        self.pub_sp.publish(at_out)
+        rospy.logdebug(at_out)
 
 
 
