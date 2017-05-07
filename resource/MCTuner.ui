@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Form</class>
- <widget class="QWidget" name="Form">
+ <widget class="QWidget" name="MCTuner">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -25,6 +25,37 @@
   <property name="windowTitle">
    <string>Multicopter Tuner</string>
   </property>
+  <widget class="ExtendedComboBox" name="combo_box_topic">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>10</y>
+     <width>170</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>1</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Topic name to publish on</string>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+   </property>
+  </widget>
   <widget class="QPushButton" name="button_run_test_rates">
    <property name="geometry">
     <rect>
@@ -55,7 +86,7 @@
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>150</y>
+     <y>160</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -68,7 +99,7 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>120</y>
+     <y>130</y>
      <width>80</width>
      <height>30</height>
     </rect>
@@ -78,7 +109,7 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>80</y>
+     <y>100</y>
      <width>80</width>
      <height>30</height>
     </rect>
@@ -88,7 +119,7 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>40</y>
+     <y>70</y>
      <width>80</width>
      <height>30</height>
     </rect>
@@ -98,7 +129,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>40</y>
+     <y>70</y>
      <width>80</width>
      <height>30</height>
     </rect>
@@ -114,7 +145,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>120</y>
+     <y>130</y>
      <width>80</width>
      <height>30</height>
     </rect>
@@ -130,7 +161,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>80</y>
+     <y>100</y>
      <width>80</width>
      <height>30</height>
     </rect>
@@ -159,9 +190,9 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>50</y>
+     <y>70</y>
      <width>30</width>
-     <height>130</height>
+     <height>120</height>
     </rect>
    </property>
    <property name="maximum">
@@ -178,7 +209,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>40</y>
      <width>120</width>
      <height>30</height>
     </rect>
@@ -200,7 +231,7 @@
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>10</y>
+     <y>40</y>
      <width>120</width>
      <height>30</height>
     </rect>
@@ -222,7 +253,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>50</y>
+     <y>70</y>
      <width>30</width>
      <height>30</height>
     </rect>
@@ -238,7 +269,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>150</y>
+     <y>160</y>
      <width>30</width>
      <height>30</height>
     </rect>
@@ -343,7 +374,7 @@
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>150</y>
+     <y>160</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -378,7 +409,27 @@
     <string>Disarm</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="button_refresh_topics">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>60</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExtendedComboBox</class>
+   <extends>QComboBox</extends>
+   <header>rqt_py_common.extended_combo_box</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
