@@ -1,4 +1,5 @@
 import os
+import math
 import rospkg
 import rospy
 import tf
@@ -7,7 +8,11 @@ from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget
 
+import mavros
+from mavros import command
 from mavros_msgs.msg import AttitudeTarget
+from mavros_msgs.msg import State
+from mavros.param import *
 
 class MCTuner(Plugin):
 	def __init__(self, context):
@@ -57,16 +62,17 @@ class MCTuner(Plugin):
 		self._widget.button_run_test_attitude.clicked.connect(self.button_run_test_attitude_pressed)
 		self._widget.button_write_parameters.clicked.connect(self.button_write_parameters_pressed)
 
-		self.M_PI = 3.14 #TODO: Use correct implementation
 		self.test_state = 0 #TODO: Use enum (0: no throttle, 1: rates test, 2: attitude test)
 
 		# TODO: Dropdown box to select setpoint output
 		self.pub_sp = rospy.Publisher('/mavros/setpoint_raw/attitude', AttitudeTarget, queue_size=10)
+		self.sub_state = rospy.Subscriber("/mavros/state", State, self.callback_state)
+
+		mavros.set_namespace()
 
 		self.loop_rate = 25.0 #Hz
 		self.timer_setpoint = rospy.Timer(rospy.Duration(1 / self.loop_rate), self.output_target_attitude)
 
-		# TODO: Initialize node (?)
 		# TODO: Attitude target publisher
 			# TODO: Output this constantly on a loop?
 			# TODO: Make a counter/something to output the min-max setpoints for tests
@@ -96,6 +102,31 @@ class MCTuner(Plugin):
 		# This will enable a setting button (gear icon) in each dock widget title bar
 		# Usually used to open a modal configuration dialog
 
+	def callback_state(self, data):
+		self._widget.button_refresh_topics.setEnabled(True)
+		self._widget.button_halt.setEnabled(True)
+		self._widget.button_arm.setEnabled(True)
+		self._widget.button_disarm.setEnabled(True)
+		self._widget.button_gains_read.setEnabled(True)
+		self._widget.button_gains_set.setEnabled(True)
+		self._widget.button_run_test_rates.setEnabled(True)
+		self._widget.button_run_test_attitude.setEnabled(True)
+		self._widget.button_write_parameters.setEnabled(True)
+
+		self._widget.spinbox_p_gain.setEnabled(True)
+		self._widget.spinbox_i_gain.setEnabled(True)
+		self._widget.spinbox_d_gain.setEnabled(True)
+		self._widget.spinbox_setpoint_attitude.setEnabled(True)
+		self._widget.spinbox_setpoint_rate.setEnabled(True)
+
+		self._widget.slider_throttle.setEnabled(True)
+
+	def do_arm(self, state):
+		try:
+			command.arming(value=state)
+		except rospy.ServiceException as ex:
+			rospy.logerr(ex)
+
 	def button_refresh_topics_pressed(self):
 		rospy.loginfo("Refresh topics button pressed!")
 
@@ -104,16 +135,26 @@ class MCTuner(Plugin):
 		self.test_state = 0
 
 	def button_arm_pressed(self):
-		rospy.loginfo("Arm button pressed!")
+		self.do_arm(True)
 
 	def button_disarm_pressed(self):
-		rospy.loginfo("Disarm button pressed!")
+		self.do_arm(False)
 
 	def button_gains_read_pressed(self):
-		rospy.loginfo("Read gains button pressed!")
+		try:
+			self._widget.spinbox_p_gain.setValue(param_get("PID_ROLL_R_P"))
+			self._widget.spinbox_i_gain.setValue(param_get("PID_ROLL_R_I"))
+			self._widget.spinbox_d_gain.setValue(param_get("PID_ROLL_R_D"))
+		except rospy.ServiceException as ex:
+			rospy.logerr(ex)
 
 	def button_gains_set_pressed(self):
-		rospy.loginfo("Set gains button pressed!")
+		try:
+			rospy.loginfo(param_set("PID_ROLL_R_P", self._widget.spinbox_p_gain.value()))
+			rospy.loginfo(param_set("PID_ROLL_R_I", self._widget.spinbox_i_gain.value()))
+			rospy.loginfo(param_set("PID_ROLL_R_D", self._widget.spinbox_d_gain.value()))
+		except rospy.ServiceException as ex:
+			rospy.logerr(ex)
 
 	def button_run_test_rates_pressed(self):
 		rospy.loginfo("Run rates button pressed!")
@@ -124,7 +165,7 @@ class MCTuner(Plugin):
 		self.test_state = 2
 
 	def button_write_parameters_pressed(self):
-		rospy.loginfo("Write EEPROM button pressed!")
+		rospy.loginfo("DEBUG: Write EEPROM button pressed!")
 
 	def output_target_attitude(self, timer_event):
 		at_out = AttitudeTarget()
@@ -147,7 +188,7 @@ class MCTuner(Plugin):
 			at_out.thrust = self._widget.slider_throttle.value() / 100.0
 
 
-			at_out.body_rate.x = self._widget.spinbox_setpoint_rate.value() * self.M_PI / 180.0
+			at_out.body_rate.x = self._widget.spinbox_setpoint_rate.value() * math.pi / 180.0
 			at_out.body_rate.y = 0.0
 			at_out.body_rate.z = 0.0
 
@@ -165,9 +206,12 @@ class MCTuner(Plugin):
 			at_out.body_rate.y = 0.0
 			at_out.body_rate.z = 0.0
 
-			(at_out.orientation.x, at_out.orientation.y, at_out.orientation.z, at_out.orientation.w) = tf.transformations.quaternion_from_euler(self._widget.spinbox_setpoint_attitude.value() * self.M_PI / 180.0, 0.0, 0.0)
+			(at_out.orientation.x, at_out.orientation.y, at_out.orientation.z, at_out.orientation.w) = tf.transformations.quaternion_from_euler(self._widget.spinbox_setpoint_attitude.value() * math.pi / 180.0, 0.0, 0.0)
 
 			at_out.type_mask = AttitudeTarget.IGNORE_ROLL_RATE +  AttitudeTarget.IGNORE_PITCH_RATE +  AttitudeTarget.IGNORE_YAW_RATE
+
+		at_out.header.stamp = rospy.Time.now()
+		at_out.header.frame_id = "fcu"
 
 		self.pub_sp.publish(at_out)
 		rospy.logdebug(at_out)

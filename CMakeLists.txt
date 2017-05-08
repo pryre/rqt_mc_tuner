@@ -10,7 +10,7 @@ project(rqt_mc_tuner)
 find_package(catkin REQUIRED COMPONENTS
   mavros
   mavros_msgs
-  std_msgs
+  geometry_msgs
   sensor_msgs
   tf
   rospy

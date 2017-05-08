@@ -3,28 +3,28 @@
 import rospy
 import tf
 from mavros_msgs.msg import AttitudeTarget
-from std_msgs.msg import Float64
+from geometry_msgs.msg import Vector3Stamped
 
 class ATToRPY():
 	def __init__(self):
 		rospy.init_node('at_to_rpy', anonymous=True)
 
-		self.pub_roll = rospy.Publisher('/at_to_rpy/roll', Float64, queue_size=10)
-		self.pub_pitch = rospy.Publisher('/at_to_rpy/pitch', Float64, queue_size=10)
-		self.pub_yaw = rospy.Publisher('/at_to_rpy/yaw', Float64, queue_size=10)
-		self.sub_at = rospy.Subscriber("/mavros/setpoint_raw/attitude", AttitudeTarget, self.callback)
+		self.pub_rpy = rospy.Publisher('/at_to_rpy', Vector3Stamped, queue_size=10)
+		self.sub_at = rospy.Subscriber("/attitude_target", AttitudeTarget, self.callback)
 
 		rospy.loginfo("Starting AttitudeTarget to RPY spinner")
 
 		rospy.spin()
 
 	def callback(self, data):
-		q = data.orientation
-		(r, p, y) = tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])
+		vec = Vector3Stamped()
 
-		self.pub_roll.publish(r)
-		self.pub_pitch.publish(p)
-		self.pub_yaw.publish(y)
+		vec.header = data.header
+
+		q = data.orientation
+		(vec.vector.x, vec.vector.y, vec.vector.z) = tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])
+
+		self.pub_rpy.publish(vec)
 
 if __name__ == '__main__':
 	try:
