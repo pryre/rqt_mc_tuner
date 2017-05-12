@@ -42,11 +42,11 @@
                                     <field>body_rate/x</field>
                                     <field_type>0</field_type>
                                     <scale>
-                                        <absolute_maximum>1000</absolute_maximum>
-                                        <absolute_minimum>0</absolute_minimum>
+                                        <absolute_maximum>2</absolute_maximum>
+                                        <absolute_minimum>-2</absolute_minimum>
                                         <relative_maximum>0</relative_maximum>
                                         <relative_minimum>-1000</relative_minimum>
-                                        <type>0</type>
+                                        <type>1</type>
                                     </scale>
                                     <topic>/mavros/setpoint_raw/attitude</topic>
                                     <type>mavros_msgs/AttitudeTarget</type>
@@ -58,7 +58,7 @@
                             </color>
                             <data>
                                 <circular_buffer_capacity>1000</circular_buffer_capacity>
-                                <time_frame_length>10</time_frame_length>
+                                <time_frame_length>30</time_frame_length>
                                 <type>3</type>
                             </data>
                             <style>
@@ -109,7 +109,7 @@
                             </color>
                             <data>
                                 <circular_buffer_capacity>1000</circular_buffer_capacity>
-                                <time_frame_length>10</time_frame_length>
+                                <time_frame_length>30</time_frame_length>
                                 <type>3</type>
                             </data>
                             <style>
@@ -169,11 +169,11 @@
                                     <field>vector/x</field>
                                     <field_type>0</field_type>
                                     <scale>
-                                        <absolute_maximum>1000</absolute_maximum>
-                                        <absolute_minimum>0</absolute_minimum>
+                                        <absolute_maximum>3.1400000000000001</absolute_maximum>
+                                        <absolute_minimum>-3.1400000000000001</absolute_minimum>
                                         <relative_maximum>0</relative_maximum>
                                         <relative_minimum>-1000</relative_minimum>
-                                        <type>0</type>
+                                        <type>1</type>
                                     </scale>
                                     <topic>/at_to_rpy</topic>
                                     <type>geometry_msgs/Vector3Stamped</type>
@@ -185,7 +185,7 @@
                             </color>
                             <data>
                                 <circular_buffer_capacity>1000</circular_buffer_capacity>
-                                <time_frame_length>10</time_frame_length>
+                                <time_frame_length>30</time_frame_length>
                                 <type>3</type>
                             </data>
                             <style>
@@ -236,7 +236,7 @@
                             </color>
                             <data>
                                 <circular_buffer_capacity>1000</circular_buffer_capacity>
-                                <time_frame_length>10</time_frame_length>
+                                <time_frame_length>30</time_frame_length>
                                 <type>3</type>
                             </data>
                             <style>

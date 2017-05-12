@@ -145,16 +145,16 @@ class MCTuner(Plugin):
 			self._widget.spinbox_p_gain.setValue(param_get("PID_ROLL_R_P"))
 			self._widget.spinbox_i_gain.setValue(param_get("PID_ROLL_R_I"))
 			self._widget.spinbox_d_gain.setValue(param_get("PID_ROLL_R_D"))
-		except rospy.ServiceException as ex:
-			rospy.logerr(ex)
+		except:
+			rospy.logerr("Error reading parameters")
 
 	def button_gains_set_pressed(self):
 		try:
 			rospy.loginfo(param_set("PID_ROLL_R_P", self._widget.spinbox_p_gain.value()))
 			rospy.loginfo(param_set("PID_ROLL_R_I", self._widget.spinbox_i_gain.value()))
 			rospy.loginfo(param_set("PID_ROLL_R_D", self._widget.spinbox_d_gain.value()))
-		except rospy.ServiceException as ex:
-			rospy.logerr(ex)
+		except:
+			rospy.logerr("Error writing parameters")
 
 	def button_run_test_rates_pressed(self):
 		rospy.loginfo("Run rates button pressed!")
